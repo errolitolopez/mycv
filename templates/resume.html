@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Resume - {{ cv.name }}{% endblock %}
+{% block content %}
+<!-- A printable CV: use the browser's print dialog to save it as a PDF. -->
+<main class="container py-4" style="max-width: 900px;">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 no-print">
+    <a href="{{ url_for('index') }}" class="small"><i class="bi bi-arrow-left"></i> Back</a>
+    <div class="d-flex align-items-center gap-2">
+      <div class="btn-group btn-group-sm" role="group" aria-label="Paper size">
+        <button type="button" class="btn btn-outline-secondary" data-size="a4" data-pdf="{{ url_for('resume_pdf', size='a4') }}">A4</button>
+        <button type="button" class="btn btn-outline-secondary" data-size="letter" data-pdf="{{ url_for('resume_pdf', size='letter') }}">Short (Letter)</button>
+      </div>
+      <a id="download-pdf" href="{{ url_for('resume_pdf', size='a4') }}" class="btn btn-sm btn-primary" download><i class="bi bi-download"></i> Download PDF</a>
+    </div>
+  </div>
+
+  <article id="sheet" class="glass sheet p-4 p-md-5 small">
+    <h1 class="h2 fw-semibold mb-0">{{ cv.name }}</h1>
+    <p class="h6 text-body-secondary">{{ cv.title }}</p>
+    <p class="text-body-secondary">{{ cv.email }} · {{ cv.phone }}</p>
+
+    <h2 class="h6 text-uppercase text-body-secondary border-bottom pb-1">Professional summary</h2>
+    <p>{{ cv.summary }}</p>
+
+    <h2 class="h6 text-uppercase text-body-secondary border-bottom pb-1">Technical skills</h2>
+    {% for icon, category, skills, on_resume in cv.skills if on_resume %}
+    <p class="mb-1"><strong>{{ category }}:</strong> {{ skills | join(", ") }}</p>
+    {% endfor %}
+
+    <h2 class="h6 text-uppercase text-body-secondary border-bottom pb-1 mt-3">Work experience</h2>
+    {% for job in cv.experience if job.on_resume %}
+    <div class="d-flex justify-content-between mt-2"><strong>{{ job.company }}</strong><span>{{ job.period }}</span></div>
+    {% if job.summary %}<p class="mb-1">{{ job.summary }}</p>{% endif %}
+    {% for project in job.projects %}
+    <div class="fw-semibold">{{ project.name }}</div>
+    {% if project.about %}<div class="text-body-secondary mb-1">{{ project.about }}</div>{% endif %}
+    {% if project.points %}<ul class="mb-1">{% for point in project.points %}<li>{{ point }}</li>{% endfor %}</ul>{% endif %}
+    {% endfor %}
+    {% endfor %}
+
+    <h2 class="h6 text-uppercase text-body-secondary border-bottom pb-1 mt-3">Education</h2>
+    {% for item in cv.education %}
+    <div class="d-flex justify-content-between"><span><strong>{{ item.course }}</strong>, {{ item.school }}</span><span>{{ item.period }}</span></div>
+    {% endfor %}
+  </article>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/resume.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,411 @@
+/* One small file on top of Bootstrap. Same studio look as mycd and mytee, with a light theme too. */
+:root {
+  --bg: #0a0b0d;
+  --glow-1: rgb(124 140 255 / 0.2);
+  --glow-2: rgb(176 108 255 / 0.16);
+  --glass-bg: rgb(28 30 36 / 0.62);
+  --glass-opaque: #1c1e24; /* plain fallback when blur is not supported */
+  --glass-border: rgb(255 255 255 / 0.1);
+  --glass-border-hover: rgb(124 140 255 / 0.55);
+  --shadow: 0 10px 40px rgb(0 0 0 / 0.35);
+  --chip-bg: rgb(255 255 255 / 0.05);
+  --accent: #7c8cff;
+  --accent-2: #b06cff;
+  --on-accent: #fff;
+  --grad: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+[data-bs-theme="light"] {
+  --bg: #f3f4fb;
+  --glow-1: rgb(124 140 255 / 0.25);
+  --glow-2: rgb(176 108 255 / 0.18);
+  --glass-bg: rgb(255 255 255 / 0.7);
+  --glass-opaque: #fff;
+  --glass-border: rgb(20 24 40 / 0.1);
+  --glass-border-hover: rgb(85 99 230 / 0.5);
+  --shadow: 0 10px 40px rgb(40 50 120 / 0.12);
+  --chip-bg: rgb(20 24 40 / 0.04);
+  --accent: #5563e6;
+  --accent-2: #9b4dff;
+}
+
+/* The first paint must not animate, or the page would visibly "settle". theme.js removes .preload. */
+.preload *,
+.preload *::before,
+.preload *::after {
+  transition: none !important; /* !important beats every component's own transition */
+  animation: none !important;
+}
+
+body {
+  background: var(--bg);
+  letter-spacing: -0.005em;
+}
+
+/* Two soft colored glows behind the page (fixed), so the glass cards have something to blur. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(60rem 40rem at 15% -10%, var(--glow-1), transparent 60%),
+    radial-gradient(50rem 36rem at 90% 10%, var(--glow-2), transparent 60%);
+}
+
+.container {
+  max-width: 1040px;
+}
+
+/* Frosted panels. Blur is only used on these few panels, never per row, because it is slow. */
+.glass {
+  background: var(--glass-opaque);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow);
+}
+
+@supports (backdrop-filter: blur(1px)) {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(18px) saturate(1.4);
+  }
+}
+
+/* Cards lift a little and light up their border on hover. */
+.card-lift {
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.card-lift:hover {
+  transform: translateY(-3px);
+  border-color: var(--glass-border-hover);
+}
+
+.brand-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--on-accent);
+  background: var(--grad);
+}
+
+/* The top bar floats over the page; sticky keeps it in reach while scrolling. */
+.topbar {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 10;
+  padding-top: 0.75rem;
+}
+
+.nav-link-pill {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  color: var(--bs-secondary-color);
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-link-pill:hover,
+.nav-link-pill.active {
+  color: var(--bs-body-color);
+  background: var(--chip-bg);
+}
+
+.icon-btn {
+  color: var(--bs-body-color);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+}
+
+.btn-accent {
+  color: var(--on-accent);
+  background: var(--grad);
+  border: 0;
+  border-radius: 999px;
+  box-shadow: 0 6px 20px var(--glow-1);
+  transition: transform 0.15s, filter 0.15s;
+}
+
+.btn-accent:hover {
+  color: var(--on-accent);
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  color: var(--bs-body-color);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: var(--chip-bg);
+}
+
+.btn-ghost:hover {
+  color: var(--bs-body-color);
+  border-color: var(--glass-border-hover);
+}
+
+/* Hero. Phones: name, summary and portrait share row one; the buttons are full width below. */
+.hero {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  grid-template-areas:
+    "text photo"
+    "actions actions";
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 0 1rem;
+}
+
+.hero-text {
+  grid-area: text;
+}
+
+.hero-actions {
+  grid-area: actions;
+}
+
+.portrait {
+  grid-area: photo;
+}
+
+@media (min-width: 768px) {
+  /* The portrait spans both rows on the right, so the text block is centered next to it. */
+  .hero {
+    grid-template-columns: 7fr 5fr;
+    grid-template-areas:
+      "text photo"
+      "actions photo";
+    align-content: center;
+    gap: 1.5rem 3rem;
+    padding: 3rem 0 2rem;
+  }
+
+  .hero-text {
+    align-self: end;
+  }
+
+  .hero-actions {
+    align-self: start;
+  }
+}
+
+.hero-name {
+  font-size: clamp(1.9rem, 6vw, 4rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+}
+
+.hero-summary {
+  max-width: 36rem;
+  font-size: 1.1rem;
+}
+
+/* Gradient text for the name only, so it is the one thing that pops. */
+.gradient-text {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* The portrait photo has its background removed, so it sits straight on the page with no panel behind it.
+   The bottom fades out (mask) because the photo is cut off at the waist. The colored shadow is on the
+   wrapper, not on the image: a mask clips everything to the image's box, which would cut the shadow
+   into a faint square. */
+.portrait {
+  max-width: 24rem;
+  justify-self: center;
+  filter: drop-shadow(0 12px 40px var(--glow-1));
+}
+
+.portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent);
+  mask-image: linear-gradient(to bottom, #000 80%, transparent);
+}
+
+.chip {
+  background: var(--chip-bg);
+  border: 1px solid var(--glass-border);
+}
+
+.chip-hover {
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.chip-hover:hover {
+  border-color: var(--glass-border-hover);
+}
+
+/* Sections */
+.block {
+  padding-top: 3rem;
+}
+
+/* Leave room for the sticky bar when a nav link jumps to a section. */
+section[id] {
+  scroll-margin-top: 4.5rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.25rem;
+}
+
+.icon-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.1rem;
+  color: var(--on-accent);
+  background: var(--grad);
+  border-radius: 0.8rem;
+}
+
+.icon-tile-sm {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.95rem;
+  border-radius: 0.6rem;
+}
+
+/* Timeline: a line down the left, a glowing dot per job. */
+.timeline {
+  position: relative;
+  padding-left: 1.75rem;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 0.45rem;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 2px;
+  background: linear-gradient(var(--accent), var(--accent-2), transparent);
+  opacity: 0.6;
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -1.75rem;
+  top: 1.7rem;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 50%;
+  background: var(--grad);
+  box-shadow: 0 0 0 4px var(--bg), 0 0 16px var(--accent);
+}
+
+/* Sections fade up as they scroll into view. Only hidden when JS runs (html.js), so no-JS still shows everything. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+
+  .js .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The section menu on phones. Bootstrap's own dropdown variables, so no selector overrides. */
+.dropdown-menu {
+  --bs-dropdown-bg: var(--glass-opaque);
+  --bs-dropdown-border-color: var(--glass-border);
+  --bs-dropdown-border-radius: 1rem;
+  --bs-dropdown-link-hover-bg: var(--chip-bg);
+  box-shadow: var(--shadow);
+}
+
+/* Phones */
+@media (max-width: 767.98px) {
+  .topbar {
+    top: 0;
+    padding-top: 0.5rem;
+  }
+
+  .hero-actions {
+    justify-content: center; /* centered under the name and photo row */
+    margin-top: 0.75rem; /* a little air between the text/photo row and the buttons */
+  }
+
+  .hero-summary {
+    font-size: 0.85rem; /* it shares a row with the photo, so it is a little smaller */
+    line-height: 1.5;
+  }
+
+  .block {
+    padding-top: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .timeline {
+    padding-left: 1.4rem;
+  }
+
+  .timeline-item::before {
+    left: -1.4rem;
+    top: 1.3rem;
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+
+  .timeline::before {
+    left: 0.3rem;
+  }
+}
+
+/* The preview sheet on the one page CV is centered; its width is set by the paper size buttons. */
+.sheet {
+  margin-inline: auto;
+}
+
+/* Printing: the page becomes a plain CV on white paper. */
+@media print {
+  body::before,
+  .topbar,
+  .no-print {
+    display: none !important; /* !important beats Bootstrap's d-* utilities */
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .glass {
+    background: #fff;
+    border-color: #ddd;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+}

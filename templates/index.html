@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}{{ cv.name }} - {{ cv.title }}{% endblock %}
+{% block content %}
+<header class="container topbar">
+  <nav id="topnav" class="glass d-flex align-items-center gap-1 px-3 py-2" aria-label="Sections">
+    <span class="brand-icon d-inline-flex align-items-center justify-content-center rounded-3 me-2"><i class="bi bi-person-badge"></i></span>
+    <span class="fw-semibold me-auto">MyCV</span>
+    <a href="#skills" class="nav-link-pill d-none d-md-inline">Skills</a>
+    <a href="#experience" class="nav-link-pill d-none d-md-inline">Experience</a>
+    <a href="#education" class="nav-link-pill d-none d-md-inline">Education</a>
+    <!-- Phones: the section links collapse into a menu. -->
+    <div class="dropdown d-md-none no-print">
+      <button type="button" class="btn btn-sm icon-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Open the section menu">
+        <i class="bi bi-list"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="#skills"><i class="bi bi-lightbulb me-2"></i>Skills</a></li>
+        <li><a class="dropdown-item" href="#experience"><i class="bi bi-briefcase me-2"></i>Experience</a></li>
+        <li><a class="dropdown-item" href="#education"><i class="bi bi-mortarboard me-2"></i>Education</a></li>
+      </ul>
+    </div>
+    <button type="button" class="btn btn-sm icon-btn ms-1 no-print" data-theme-toggle aria-label="Switch light or dark theme" title="Switch theme">
+      <i class="bi bi-circle-half"></i>
+    </button>
+    <a href="{{ url_for('resume') }}" class="btn btn-sm btn-accent ms-1 no-print" aria-label="One page CV"><i class="bi bi-file-earmark-text"></i> <span class="d-none d-sm-inline">One page CV</span><span class="d-sm-none">CV</span></a>
+  </nav>
+</header>
+
+<main class="container pb-4">
+
+  <!-- Hero: a grid. On phones the name, summary and portrait share the first row (two columns) and the
+       buttons sit below. On wider screens the text is on the left and the portrait spans the right. -->
+  <section class="hero">
+    <div class="hero-text">
+      <span class="chip rounded-pill px-3 py-1 small d-inline-block mb-3">{{ cv.title }}</span>
+      <h1 class="hero-name gradient-text">{{ cv.name }}</h1>
+      <p class="hero-summary text-body-secondary mb-0">{{ cv.summary }}</p>
+    </div>
+    <div class="portrait">
+      <img src="{{ url_for('static', filename='img/profile.webp') }}" alt="Photo of {{ cv.name }}"
+           width="560" height="733">
+    </div>
+    <div class="hero-actions d-flex flex-wrap gap-2 no-print">
+      <a href="#experience" class="btn btn-accent"><i class="bi bi-briefcase"></i> See my experience</a>
+      <a href="{{ url_for('resume') }}" class="btn btn-ghost"><i class="bi bi-file-earmark-text"></i> One page CV</a>
+    </div>
+  </section>
+
+  <!-- Skills: one card per group (a bento grid). -->
+  <section id="skills" class="block">
+    <h2 class="section-title reveal"><span class="icon-tile"><i class="bi bi-lightbulb"></i></span>Technical skills</h2>
+    <div class="row g-3">
+      {% for icon, category, skills, on_resume in cv.skills %}
+      <div class="col-12 col-md-6 {% if loop.first %}col-lg-8{% else %}col-lg-4{% endif %} reveal">
+        <div class="glass card-lift h-100 p-3 p-md-4">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="icon-tile icon-tile-sm"><i class="bi {{ icon }}"></i></span>
+            <span class="fw-semibold">{{ category }}</span>
+          </div>
+          <div class="d-flex flex-wrap gap-2">
+            {% for skill in skills %}<span class="chip chip-hover rounded-pill px-3 py-1 small">{{ skill }}</span>{% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="experience" class="block">
+    <h2 class="section-title reveal"><span class="icon-tile"><i class="bi bi-briefcase"></i></span>Work experience</h2>
+    <ol class="list-unstyled mb-0 timeline">
+      {% for job in cv.experience %}
+      <li class="timeline-item reveal">
+        <div class="glass card-lift p-3 p-md-4">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-1">
+            <div class="fw-semibold fs-5">{{ job.company }}</div>
+            <span class="chip rounded-pill px-3 py-1 small">{{ job.period }}</span>
+          </div>
+          {% if job.summary %}
+          <p class="text-body-secondary mb-0 mt-2">{{ job.summary }}</p>
+          {% endif %}
+          {% for project in job.projects %}
+          <div class="mt-3">
+            <div class="fw-semibold"><i class="bi bi-dot"></i>{{ project.name }}</div>
+            {% if project.about %}<div class="text-body-secondary small">{{ project.about }}</div>{% endif %}
+            {% if project.points %}<ul class="small text-body-secondary mb-0 mt-1">{% for point in project.points %}<li>{{ point }}</li>{% endfor %}</ul>{% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+  </section>
+
+  <section id="education" class="block">
+    <h2 class="section-title reveal"><span class="icon-tile"><i class="bi bi-mortarboard"></i></span>Education</h2>
+    {% for item in cv.education %}
+    <div class="glass card-lift p-3 p-md-4 reveal d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <div class="fw-semibold fs-5">{{ item.course }}</div>
+        <div class="text-body-secondary">{{ item.school }}</div>
+      </div>
+      <span class="chip rounded-pill px-3 py-1 small">{{ item.period }}</span>
+    </div>
+    {% endfor %}
+  </section>
+
+  <footer class="text-center text-body-secondary small py-4">&copy; {{ cv.name }}</footer>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}

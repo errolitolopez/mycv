@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ cv.name }} - {{ cv.title }}</title>
+  <!-- Standalone page for WeasyPrint: no Bootstrap and no network, so the PDF is the same everywhere. -->
+  <style>
+    :root {
+      --ink: #1a1a1a;
+      --muted: #555;
+      --rule: #bbb;
+      --accent: #4a56d6;
+    }
+    @page { size: {{ page_size }}; margin: 14mm 16mm; }
+    body { font-family: "DejaVu Sans", Helvetica, Arial, sans-serif; font-size: 8.6pt; line-height: 1.4; color: var(--ink); margin: 0; }
+    h1 { font-size: 20pt; margin: 0; }
+    .title { font-size: 11pt; color: var(--accent); margin: 1mm 0; }
+    .contact { color: var(--muted); margin: 0 0 4mm; }
+    h2 { font-size: 9pt; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); border-bottom: 0.4pt solid var(--rule); padding-bottom: 0.8mm; margin: 4.5mm 0 1.6mm; }
+    p { margin: 0 0 1.6mm; }
+    .row { display: flex; justify-content: space-between; }
+    .job { margin-bottom: 2.2mm; break-inside: avoid; }
+    .project { font-weight: bold; }
+    .muted { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <h1>{{ cv.name }}</h1>
+  <div class="title">{{ cv.title }}</div>
+  <p class="contact">{{ cv.email }} · {{ cv.phone }}</p>
+
+  <h2>Professional summary</h2>
+  <p>{{ cv.summary }}</p>
+
+  <h2>Technical skills</h2>
+  {% for icon, category, skills, on_resume in cv.skills if on_resume %}
+  <p><strong>{{ category }}:</strong> {{ skills | join(", ") }}</p>
+  {% endfor %}
+
+  <h2>Work experience</h2>
+  {% for job in cv.experience if job.on_resume %}
+  <div class="job">
+    <div class="row"><strong>{{ job.company }}</strong><span class="muted">{{ job.period }}</span></div>
+    {% for project in job.projects %}
+    <div class="project">{{ project.name }}</div>
+    {% if project.about %}<div class="muted">{{ project.about }}</div>{% endif %}
+    {% if project.points %}<ul>{% for point in project.points %}<li>{{ point }}</li>{% endfor %}</ul>{% endif %}
+    {% endfor %}
+  </div>
+  {% endfor %}
+
+  <h2>Education</h2>
+  {% for item in cv.education %}
+  <div class="row"><span><strong>{{ item.course }}</strong>, {{ item.school }}</span><span class="muted">{{ item.period }}</span></div>
+  {% endfor %}
+</body>
+</html>
