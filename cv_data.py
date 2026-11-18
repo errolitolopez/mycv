@@ -24,7 +24,7 @@ CV = {
     ],
     "portfolio_period": "May 2024 – Present",
     "portfolio_intro": (
-        "Built Java applications, published libraries and deployed them to the cloud during a career break, "
+        "Built Java applications, published libraries and deployed them to the cloud as an independent developer, "
         "to deepen expertise across the modern Java ecosystem."
     ),
     # on_resume: the one-page resume only lists these.
@@ -75,13 +75,13 @@ CV = {
             ],
         },
         {
-            "company": "Career break",
+            "company": "Independent Software Developer",
             "period": "May 2024 – May 2026",
             "on_resume": True,
             "projects": [
-                {"name": "Business & upskilling",
-                 "about": "Ran a business and upskilled across the modern Java ecosystem, building and deploying "
-                          "Java applications and libraries in the cloud.",
+                {"name": "Personal projects",
+                 "about": "Built and deployed Java applications and open-source libraries in the cloud "
+                          "(DB2Spring, My Crud), while running a small business.",
                  "points": []},
             ],
         },
