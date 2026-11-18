@@ -101,7 +101,8 @@ CV = {
             "on_resume": True,
             "projects": [
                 {"name": "Robinson's Bank Motorcycle Inventory Management System",
-                 "about": "Tracks motorcycle inventory across stores and warehouses.",
+                 "about": "Tracks motorcycle inventory across stores and warehouses, and sells repossessed "
+                          "units through a role-based approval workflow.",
                  "points": []},
             ],
         },
